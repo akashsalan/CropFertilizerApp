@@ -62,6 +62,10 @@ if submitted:
         predicted_fert = fertilizer_model.predict(fert_input_scaled)[0]
         fert_name = fertilizer_encoder.inverse_transform([predicted_fert])[0]
 
+    if safe_crop != predicted_crop.lower():
+        st.info(f"🧪 So... the recommended crop is '{predicted_crop.capitalize()}', but the person who gave me the dataset forgot to include fertilizers for it 😅\nSo here's a fertilizer for a close cousin: '{safe_crop.capitalize()}' 🌱\nRecommended Fertilizer in {soil_type} soil: {fert_name}")
+    else:
         st.info(f"🧪 Recommended Fertilizer for {safe_crop.capitalize()} in {soil_type} soil: {fert_name}")
+
     except Exception as e:
         st.warning(f"⚠️ Fertilizer could not be predicted. ({str(e)})")
