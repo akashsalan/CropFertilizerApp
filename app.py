@@ -44,12 +44,15 @@ if submitted:
     st.success(f"✅ Recommended Crop: {predicted_crop.capitalize()}")
 
     # Handle unsupported crops
-    crop_mapping = {
-        'rice': 'barley',
-        'paddy': 'maize',
-        'mothbeans': 'mungbean',
-    }
-    safe_crop = crop_mapping.get(predicted_crop.lower(), predicted_crop.lower())
+    # Get all supported crops in fertilizer encoder
+    supported_crops = crop_encoder.classes_.tolist()
+
+    # Use fallback crop if predicted crop is not supported
+    if predicted_crop.lower() not in supported_crops:
+        fallback_crop = "barley"  # You can change to 'maize' or something else
+        safe_crop = fallback_crop
+    else:
+        safe_crop = predicted_crop.lower()
 
     try:
         # Encode crop and soil
