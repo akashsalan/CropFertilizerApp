@@ -23,16 +23,18 @@ st.title("🌾 Crop and Fertilizer Recommendation System")
 # Input form
 with st.form("input_form"):
     st.header("🌱 Enter Soil & Environmental Details")
-    N = st.number_input("Nitrogen (N)", 0, 200)
-    P = st.number_input("Phosphorous (P)", 0, 200)
-    K = st.number_input("Potassium (K)", 0, 200)
 
-    temperature = st.number_input("Temperature (°C)", min_value=10.0, max_value=45.0, value=25.0, step=0.01)
-    humidity = st.number_input("Humidity (%)", min_value=20.0, max_value=100.0, value=60.0, step=0.01)
+    # Pre-filled with test values for 'maize' or a valid crop
+    N = st.number_input("Nitrogen (N)", min_value=0, max_value=200, value=90)
+    P = st.number_input("Phosphorous (P)", min_value=0, max_value=200, value=42)
+    K = st.number_input("Potassium (K)", min_value=0, max_value=200, value=43)
+    
+    temperature = st.number_input("Temperature (°C)", min_value=10.0, max_value=45.0, value=20.87, step=0.01)
+    humidity = st.number_input("Humidity (%)", min_value=20.0, max_value=100.0, value=82.0, step=0.01)
     ph = st.number_input("Soil pH", min_value=3.0, max_value=10.0, value=6.5, step=0.01)
-    rainfall = st.number_input("Rainfall (mm)", min_value=0.0, max_value=300.0, value=100.0, step=0.01)
+    rainfall = st.number_input("Rainfall (mm)", min_value=0.0, max_value=300.0, value=202.93, step=0.01)
 
-    soil_type = st.selectbox("Soil Type", ["sandy", "loamy", "black", "red", "clay"])
+    soil_type = st.selectbox("Soil Type", ["sandy", "loamy", "black", "red", "clay"], index=0)
 
     submitted = st.form_submit_button("Recommend")
 
