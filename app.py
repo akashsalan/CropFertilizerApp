@@ -43,17 +43,25 @@ if submitted:
     predicted_crop = crop_model.predict(crop_input_scaled)[0]
     st.success(f"✅ Recommended Crop: {predicted_crop.capitalize()}")
 
+    # Handle unsupported crops
+    crop_mapping = {
+        'rice': 'barley',     # or 'maize'
+        'paddy': 'maize',
+        'mothbeans': 'mungbean',
+        # Add more if needed
+    }
+    safe_crop = crop_mapping.get(predicted_crop.lower(), predicted_crop.lower())
+
     # Fertilizer Prediction
     try:
-        encoded_crop = crop_encoder.transform([predicted_crop.lower()])[0]
+        encoded_crop = crop_encoder.transform([safe_crop])[0]
         encoded_soil = soil_encoder.transform([soil_type.lower()])[0]
 
-        # Match fertilizer CSV: includes N, P, K, Temp, Humidity, Moisture (fixed at 50.0)
         fert_input = np.array([[encoded_crop, encoded_soil, N, P, K, temperature, humidity, 50.0]])
         fert_input_scaled = fertilizer_scaler.transform(fert_input)
         predicted_fert = fertilizer_model.predict(fert_input_scaled)[0]
         fert_name = fertilizer_encoder.inverse_transform([predicted_fert])[0]
 
-        st.info(f"🧪 Recommended Fertilizer: {fert_name}")
+        st.info(f"🧪 Recommended Fertilizer for {safe_crop.capitalize()} in {soil_type} soil: {fert_name}")
     except Exception as e:
-        st.warning(f"⚠️ Fertilizer could not be predicted for this crop. ({str(e)})")
+        st.warning(f"⚠️ Fertilizer could not be predicted. ({str(e)})")
