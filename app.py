@@ -23,11 +23,11 @@ st.title("🌾 Crop and Fertilizer Recommendation System")
 with st.form("input_form"):
     st.header("🌱 Enter Soil & Environmental Details")
 
-    # Pre-filled with working values from fertilizer dataset
+    # Pre-filled values
     N = st.number_input("Nitrogen (N)", min_value=0, max_value=200, value=90)
     P = st.number_input("Phosphorous (P)", min_value=0, max_value=200, value=42)
     K = st.number_input("Potassium (K)", min_value=0, max_value=200, value=43)
-    
+
     temperature = st.number_input("Temperature (°C)", min_value=10.0, max_value=45.0, value=22.0, step=0.01)
     humidity = st.number_input("Humidity (%)", min_value=20.0, max_value=100.0, value=82.0, step=0.01)
     ph = st.number_input("Soil pH", min_value=3.0, max_value=10.0, value=6.5, step=0.01)
@@ -45,27 +45,30 @@ if submitted:
 
     # Handle unsupported crops
     crop_mapping = {
-        'rice': 'barley',     # or 'maize'
+        'rice': 'barley',
         'paddy': 'maize',
         'mothbeans': 'mungbean',
-        # Add more if needed
     }
     safe_crop = crop_mapping.get(predicted_crop.lower(), predicted_crop.lower())
 
-    # Fertilizer Prediction
     try:
+        # Encode crop and soil
         encoded_crop = crop_encoder.transform([safe_crop])[0]
         encoded_soil = soil_encoder.transform([soil_type.lower()])[0]
 
+        # Fertilizer input (with fixed moisture = 50.0)
         fert_input = np.array([[encoded_crop, encoded_soil, N, P, K, temperature, humidity, 50.0]])
         fert_input_scaled = fertilizer_scaler.transform(fert_input)
         predicted_fert = fertilizer_model.predict(fert_input_scaled)[0]
         fert_name = fertilizer_encoder.inverse_transform([predicted_fert])[0]
 
-    if safe_crop != predicted_crop.lower():
-        st.info(f"🧪 So... the recommended crop is '{predicted_crop.capitalize()}', but the person who gave me the dataset forgot to include fertilizers for it 😅\nSo here's a fertilizer for a close cousin: '{safe_crop.capitalize()}' 🌱\nRecommended Fertilizer in {soil_type} soil: {fert_name}")
-    else:
-        st.info(f"🧪 Recommended Fertilizer for {safe_crop.capitalize()} in {soil_type} soil: {fert_name}")
+        # Show fertilizer result
+        if safe_crop != predicted_crop.lower():
+            st.info(f"""🧪 So... the recommended crop is '{predicted_crop.capitalize()}', but the person who gave me the dataset forgot to include fertilizers for it 😅
+So here's a fertilizer for a close cousin: '{safe_crop.capitalize()}' 🌱
+Recommended Fertilizer in {soil_type} soil: {fert_name}""")
+        else:
+            st.info(f"🧪 Recommended Fertilizer for {safe_crop.capitalize()} in {soil_type} soil: {fert_name}")
 
     except Exception as e:
         st.warning(f"⚠️ Fertilizer could not be predicted. ({str(e)})")
