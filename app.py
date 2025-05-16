@@ -1,4 +1,4 @@
-# app.py
+    # app.py
 import streamlit as st
 import numpy as np
 import pickle
@@ -64,12 +64,14 @@ if submitted:
 
         # Show fertilizer result
         if safe_crop != predicted_crop.lower():
-            st.info(
-            f"🧪 So... the recommended crop is '{predicted_crop.capitalize()}', "
-            "but the person who gave me the dataset forgot to include fertilizers for it 😅\n"
-            f"So here's a fertilizer for a close cousin: '{safe_crop.capitalize()}' 🌱\n"
-            f"Recommended Fertilizer in {soil_type} soil: {fert_name}"
-        )
+            st.markdown(
+                f"""💡 **So... the recommended crop is _'{predicted_crop.capitalize()}'_,**  
+            but the person who gave me the dataset forgot to include fertilizers for it 😅  
+            So here's a fertilizer for a close cousin: **_{safe_crop.capitalize()}_** 🌱  
+            **Recommended Fertilizer in _{soil_type}_ soil:** `{fert_name}`""",
+                unsafe_allow_html=True
+            )
+
         else:
             st.info(f"🧪 Recommended Fertilizer for {safe_crop.capitalize()} in {soil_type} soil: {fert_name}")
 
